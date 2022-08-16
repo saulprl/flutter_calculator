@@ -11,18 +11,19 @@ class Display extends StatefulWidget {
 }
 
 class _DisplayState extends State<Display> {
-  bool _isInit = false;
   late String _display;
+  late String _history;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_isInit) {
-      _display = Provider.of<DisplayProvider>(context).getDisplayAsString();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    _display = Provider.of<DisplayProvider>(context).getDisplayAsString();
+    _history = Provider.of<DisplayProvider>(context).getHistoryAsString();
+
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height * 0.15,
@@ -40,11 +41,22 @@ class _DisplayState extends State<Display> {
       ),
       child: Align(
         alignment: Alignment.bottomRight,
-        child: Text(
-          _display,
-          textAlign: TextAlign.right,
-          // textDirection: TextDirection.rtl,
-          style: const TextStyle(fontSize: 36.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              _history,
+              textAlign: TextAlign.right,
+              style: TextStyle(color: Colors.grey[600], fontSize: 20.0),
+            ),
+            Text(
+              _display,
+              textAlign: TextAlign.right,
+              // textDirection: TextDirection.rtl,
+              style: const TextStyle(fontSize: 36.0),
+            ),
+          ],
         ),
       ),
     );
