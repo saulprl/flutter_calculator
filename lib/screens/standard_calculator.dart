@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/display.dart';
-import '../widgets/keyboards/basic_keyboard.dart';
+import '../widgets/keyboards/standard_keyboard.dart';
 
 class StandardCalculator extends StatelessWidget {
   const StandardCalculator({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class StandardCalculator extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Display(),
-            BasicKeyboard(),
+            StandardKeyboard(),
           ],
         ),
       ),
