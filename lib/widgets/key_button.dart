@@ -5,14 +5,14 @@ class KeyButton extends StatelessWidget {
   final Math? tex;
   final String? label;
   final IconData? icon;
-  final Function(BuildContext context) onTap;
+  final Function(BuildContext context)? onTap;
 
   const KeyButton({
     Key? key,
     this.tex,
     this.icon,
     this.label,
-    required this.onTap,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -28,6 +28,11 @@ class KeyButton extends StatelessWidget {
           ),
         ),
       ),
+      onPressed: onTap == null
+          ? null
+          : () {
+              onTap!(context);
+            },
       child: tex ??
           (label != null
               ? Text(
@@ -35,9 +40,6 @@ class KeyButton extends StatelessWidget {
                   style: const TextStyle(fontSize: 22.0),
                 )
               : Icon(icon!)),
-      onPressed: () {
-        onTap(context);
-      },
     );
   }
 }
