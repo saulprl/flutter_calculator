@@ -6,36 +6,53 @@ import '../../providers/display_provider.dart';
 
 import '../key_button.dart';
 
-class BasicKeyboard extends StatelessWidget {
-  BasicKeyboard({Key? key}) : super(key: key);
+class StandardKeyboard extends StatelessWidget {
+  StandardKeyboard({Key? key}) : super(key: key);
 
   final List<KeyButton> _buttons = [
-    KeyButton(label: '%', onTap: (BuildContext context) {}),
-    KeyButton(label: 'CE', onTap: (BuildContext context) {}),
+    KeyButton(
+      label: '%', /*onTap: (BuildContext context) {}*/
+    ),
+    KeyButton(
+        label: 'CE',
+        onTap: (BuildContext context) {
+          Provider.of<DisplayProvider>(context, listen: false).clearEntry();
+        }),
     KeyButton(
         label: 'C',
         onTap: (BuildContext context) {
           Provider.of<DisplayProvider>(context, listen: false).clearDisplay();
         }),
-    KeyButton(icon: Icons.backspace_outlined, onTap: (BuildContext context) {}),
     KeyButton(
-        tex: Math.tex(
-          r'\frac 1 x',
-          textStyle: const TextStyle(fontSize: 22.0),
-        ),
-        onTap: (BuildContext context) {}),
+        icon: Icons.backspace_outlined,
+        onTap: (BuildContext context) {
+          Provider.of<DisplayProvider>(context, listen: false).backspace();
+        }),
+    KeyButton(
+      tex: Math.tex(
+        r'\frac 1 x',
+        textStyle: const TextStyle(fontSize: 22.0),
+      ),
+      // onTap: (BuildContext context) {}
+    ),
     KeyButton(
         tex: Math.tex(
           r'x^2',
-          textStyle: const TextStyle(fontSize: 22.0),
+          textStyle: const TextStyle(fontSize: 22.0, color: Colors.white),
         ),
-        onTap: (BuildContext context) {}),
+        onTap: (BuildContext context) {
+          Provider.of<DisplayProvider>(context, listen: false).powerSymbol();
+          Provider.of<DisplayProvider>(context, listen: false).typeNumber('2');
+        }),
     KeyButton(
-        tex: Math.tex(
-          r'\sqrt x',
-          textStyle: const TextStyle(fontSize: 22.0),
-        ),
-        onTap: (BuildContext context) {}),
+      tex: Math.tex(
+        r'\sqrt x',
+        textStyle: TextStyle(fontSize: 22.0, color: Colors.grey[600]),
+      ),
+      // onTap: (BuildContext context) {
+      //   Provider.of<DisplayProvider>(context, listen: false).radicalSymbol();
+      // }
+    ),
     KeyButton(
         label: '÷',
         onTap: (BuildContext context) {
@@ -102,11 +119,12 @@ class BasicKeyboard extends StatelessWidget {
           Provider.of<DisplayProvider>(context, listen: false).plusSymbol();
         }),
     KeyButton(
-        tex: Math.tex(
-          r'\frac + -',
-          textStyle: const TextStyle(fontSize: 22.0),
-        ),
-        onTap: (BuildContext context) {}),
+      tex: Math.tex(
+        r'\frac + -',
+        textStyle: TextStyle(fontSize: 22.0, color: Colors.grey[600]),
+      ),
+      // onTap: (BuildContext context) {}
+    ),
     KeyButton(
         label: '0',
         onTap: (BuildContext context) {
