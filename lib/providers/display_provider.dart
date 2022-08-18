@@ -132,6 +132,10 @@ class DisplayProvider with ChangeNotifier {
             debugPrint(secondOperand!.toString());
             output.insert(0, sqrt(secondOperand));
             break;
+          } else if (postFix.contains('-')) {
+            debugPrint(secondOperand!.toString());
+            output.insert(0, secondOperand * -1);
+            postFix.removeAt(0);
           }
         }
       }
@@ -147,8 +151,11 @@ class DisplayProvider with ChangeNotifier {
     List<dynamic> output = [];
     List<String> operators = [];
     for (String segment in expression.split(' ')) {
+      if (segment == '') {
+        continue;
+      }
       try {
-        if (!_isOperator(segment)) {
+        if (!_isOperator(segment.trim())) {
           output.add(double.parse(segment));
         } else {
           if (_precedence(segment) > _precedence(operators.first)) {
