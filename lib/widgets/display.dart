@@ -26,19 +26,18 @@ class _DisplayState extends State<Display> {
 
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.15,
       padding: const EdgeInsets.symmetric(
-        vertical: 12.0,
+        vertical: 4.0,
         horizontal: 4.0,
       ),
       margin: const EdgeInsets.symmetric(
-        vertical: 8.0,
+        vertical: 4.0,
         horizontal: 4.0,
       ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: Colors.black),
-      ),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(12.0),
+      //   border: Border.all(color: Colors.black),
+      // ),
       child: Align(
         alignment: Alignment.bottomRight,
         child: Column(
