@@ -20,9 +20,9 @@ class KeyButton extends StatelessWidget {
     return ElevatedButton(
       style: ButtonStyle(
         shape: MaterialStateProperty.all<ContinuousRectangleBorder>(
-          const ContinuousRectangleBorder(
+          ContinuousRectangleBorder(
             side: BorderSide(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.background,
               width: 2.0,
             ),
           ),
