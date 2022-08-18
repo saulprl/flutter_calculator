@@ -23,7 +23,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Calculator',
         theme: ThemeData(
-          primarySwatch: Colors.pink,
+          colorScheme: const ColorScheme.dark(
+            primary: Colors.pink,
+            onPrimary: Colors.white,
+          ),
         ),
         home: const StandardCalculator(),
       ),
