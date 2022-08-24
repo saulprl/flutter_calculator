@@ -19,7 +19,7 @@ class StandardCalculator extends StatelessWidget {
       drawer: const CalcDrawer(),
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: const [
             Display(),
             Keyboard(),
