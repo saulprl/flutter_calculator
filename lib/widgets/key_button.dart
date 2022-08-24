@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
+
+import '../providers/display_provider.dart';
 
 class KeyButton extends StatelessWidget {
   final Math? tex;
@@ -35,10 +38,17 @@ class KeyButton extends StatelessWidget {
             },
       child: tex ??
           (label != null
-              ? Text(
-                  label!,
-                  style: const TextStyle(fontSize: 22.0),
-                )
+              ? label! == 'C'
+                  ? Text(
+                      Provider.of<DisplayProvider>(context).isEntryEmpty()
+                          ? 'C'
+                          : 'CE',
+                      style: const TextStyle(fontSize: 22.0),
+                    )
+                  : Text(
+                      label!,
+                      style: const TextStyle(fontSize: 22.0),
+                    )
               : Icon(icon!)),
     );
   }
