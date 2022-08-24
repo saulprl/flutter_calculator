@@ -27,8 +27,10 @@ class DisplayProvider with ChangeNotifier {
   }
 
   void backspace() {
-    _display.removeLast();
-    notifyListeners();
+    if (_display.isNotEmpty) {
+      _display.removeLast();
+      notifyListeners();
+    }
   }
 
   void clearEntry() {
