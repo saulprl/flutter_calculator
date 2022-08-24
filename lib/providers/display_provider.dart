@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class DisplayProvider with ChangeNotifier {
-  List<String> _display = [];
+  List<String> _display = ['0'];
   List<String> _history = [];
 
   List<String> get display => [..._display];
@@ -26,25 +26,39 @@ class DisplayProvider with ChangeNotifier {
     return concatenated;
   }
 
+  bool isEntryEmpty() {
+    return (_display.length == 1 && _display.contains('0'));
+  }
+
+  bool _isInteger(num value) => value is int || value == value.roundToDouble();
+
   void backspace() {
-    if (_display.isNotEmpty) {
+    if (!isEntryEmpty()) {
       _display.removeLast();
+      if (_display.isEmpty) {
+        _display.add('0');
+      }
       notifyListeners();
     }
   }
 
   void clearEntry() {
     _display.clear();
+    _display.add('0');
     notifyListeners();
   }
 
   void clearDisplay() {
     _display.clear();
     _history.clear();
+    _display.add('0');
     notifyListeners();
   }
 
   void typeNumber(String number) {
+    if (isEntryEmpty()) {
+      _display.removeLast();
+    }
     _display.add(number);
     notifyListeners();
   }
@@ -66,6 +80,48 @@ class DisplayProvider with ChangeNotifier {
 
   void divideSymbol() {
     _display.addAll([' ', '÷', ' ']);
+    notifyListeners();
+  }
+
+  void percentSymbol() {
+    if (!isEntryEmpty()) {
+      if (!_display.contains(' ')) {
+        List<String> lastNumber = [];
+        String number = '';
+        while (_display.isNotEmpty &&
+            _display.last != ' ' &&
+            !_isOperator(_display.last)) {
+          lastNumber.insert(0, _display.removeLast());
+        }
+        for (String char in lastNumber) {
+          number += char;
+        }
+        _display.add((double.parse(number) / 100.0).toString());
+      } else if (_display.contains('+') || _display.contains('-')) {
+        String firstNumber = '';
+        String secondNumber = '';
+        List<String> secondNumberList = [];
+        for (String char in _display) {
+          if (char == ' ') break;
+          firstNumber += char;
+        }
+
+        double firstOperand = double.parse(firstNumber);
+        while (_display.last != ' ') {
+          secondNumberList.insert(0, _display.removeLast());
+        }
+        for (String char in secondNumberList) {
+          secondNumber += char;
+        }
+
+        double secondOperand = double.parse(secondNumber);
+        double result = firstOperand * (secondOperand / 100);
+
+        _display.add(_isInteger(result)
+            ? (result.round()).toString()
+            : result.toString());
+      }
+    }
     notifyListeners();
   }
 
@@ -134,11 +190,12 @@ class DisplayProvider with ChangeNotifier {
             debugPrint(secondOperand!.toString());
             output.insert(0, sqrt(secondOperand));
             break;
-          } else if (postFix.contains('-')) {
-            debugPrint(secondOperand!.toString());
-            output.insert(0, secondOperand * -1);
-            postFix.removeAt(0);
           }
+          // else if (postFix.contains('-')) {
+          //   debugPrint(secondOperand!.toString());
+          //   output.insert(0, secondOperand * -1);
+          //   postFix.removeAt(0);
+          // }
         }
       }
     }
