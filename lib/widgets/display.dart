@@ -46,14 +46,16 @@ class _DisplayState extends State<Display> {
           children: [
             Text(
               _history,
+              maxLines: 1,
               textAlign: TextAlign.right,
-              style: TextStyle(color: Colors.grey[600], fontSize: 20.0),
+              style: TextStyle(color: Colors.grey[600], fontSize: 28.0),
             ),
             Text(
               _display,
+              maxLines: 2,
               textAlign: TextAlign.right,
               // textDirection: TextDirection.rtl,
-              style: const TextStyle(fontSize: 36.0),
+              style: const TextStyle(fontSize: 42.0),
             ),
           ],
         ),
