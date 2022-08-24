@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/display.dart';
 import '../widgets/calc_drawer.dart';
+import '../widgets/keyboards/keyboard.dart';
 import '../widgets/keyboards/standard_keyboard.dart';
 
 class StandardCalculator extends StatelessWidget {
@@ -19,9 +20,9 @@ class StandardCalculator extends StatelessWidget {
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Display(),
-            StandardKeyboard(),
+          children: const [
+            Display(),
+            Keyboard(),
           ],
         ),
       ),
