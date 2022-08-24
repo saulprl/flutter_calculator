@@ -24,13 +24,10 @@ class _KeyboardState extends State<Keyboard> {
     if (!_isInit) {
       _standard = [
         KeyButton(
-          label: Provider.of<DisplayProvider>(context).display.isEmpty
-              ? 'C'
-              : 'CE',
+          label: 'C',
           onTap: (BuildContext context) {
             if (Provider.of<DisplayProvider>(context, listen: false)
-                .display
-                .isEmpty) {
+                .isEntryEmpty()) {
               Provider.of<DisplayProvider>(context, listen: false)
                   .clearDisplay();
             } else {
@@ -44,8 +41,12 @@ class _KeyboardState extends State<Keyboard> {
             Provider.of<DisplayProvider>(context, listen: false).backspace();
           },
         ),
-        const KeyButton(
+        KeyButton(
           icon: FontAwesomeIcons.percent,
+          onTap: (context) {
+            Provider.of<DisplayProvider>(context, listen: false)
+                .percentSymbol();
+          },
         ),
         KeyButton(
           icon: FontAwesomeIcons.divide,
