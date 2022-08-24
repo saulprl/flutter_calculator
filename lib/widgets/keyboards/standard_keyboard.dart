@@ -31,7 +31,8 @@ class StandardKeyboard extends StatelessWidget {
     KeyButton(
       tex: Math.tex(
         r'\frac 1 x',
-        textStyle: const TextStyle(fontSize: 22.0),
+        textStyle: const TextStyle(
+            fontSize: 22.0), //TODO: Refactor this array for a simpler one.
       ),
       // onTap: (BuildContext context) {}
     ),

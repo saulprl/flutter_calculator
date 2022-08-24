@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
             onPrimary: Colors.white,
           ),
         ),
-        home: const StandardCalculator(),
+        home:
+            const StandardCalculator(), //TODO: Add tabs for conversion calculators.
       ),
     );
   }
