@@ -2,13 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../models/eval_exception.dart';
+
 class DisplayProvider with ChangeNotifier {
   List<String> _display = ['0'];
   List<String> _history = [];
+  List<String> _result = [];
 
   List<String> get display => [..._display];
-
   List<String> get history => [..._history];
+  List<String> get result => [..._result];
 
   String getDisplayAsString() {
     String concatenated = '';
@@ -21,6 +24,14 @@ class DisplayProvider with ChangeNotifier {
   String getHistoryAsString() {
     String concatenated = '';
     for (String char in _history) {
+      concatenated += char;
+    }
+    return concatenated;
+  }
+
+  String getResultAsString() {
+    String concatenated = '';
+    for (String char in _result) {
       concatenated += char;
     }
     return concatenated;
@@ -45,46 +56,66 @@ class DisplayProvider with ChangeNotifier {
   void clearEntry() {
     _display.clear();
     _display.add('0');
+    _result.clear();
     notifyListeners();
   }
 
   void clearDisplay() {
     _display.clear();
     _history.clear();
+    _result.clear();
     _display.add('0');
     notifyListeners();
   }
 
   void typeNumber(String number) {
-    if (isEntryEmpty()) {
+    if (isEntryEmpty() && number != '.') {
       _display.removeLast();
+    } else if (number == '.') {
+      final concat = getDisplayAsString();
+      final segments = concat.split(' ');
+      final lastOperand = segments[segments.length - 1];
+      if (lastOperand.contains('.')) return;
     }
     _display.add(number);
+    _evaluateOnTheFly();
     notifyListeners();
   }
 
   void plusSymbol() {
-    _display.addAll([' ', '+', ' ']);
-    notifyListeners();
+    if (_display.last != ' ') {
+      _display.addAll([' ', '+', ' ']);
+      _evaluateOnTheFly();
+      notifyListeners();
+    }
   }
 
   void minusSymbol() {
-    _display.addAll([' ', '-', ' ']);
-    notifyListeners();
+    if (_display.last != ' ') {
+      _display.addAll([' ', '-', ' ']);
+      _evaluateOnTheFly();
+      notifyListeners();
+    }
   }
 
   void multiplySymbol() {
-    _display.addAll([' ', 'x', ' ']);
-    notifyListeners();
+    if (_display.last != ' ') {
+      _display.addAll([' ', 'x', ' ']);
+      _evaluateOnTheFly();
+      notifyListeners();
+    }
   }
 
   void divideSymbol() {
-    _display.addAll([' ', '÷', ' ']);
-    notifyListeners();
+    if (_display.last != ' ') {
+      _display.addAll([' ', '÷', ' ']);
+      _evaluateOnTheFly();
+      notifyListeners();
+    }
   }
 
   void percentSymbol() {
-    if (!isEntryEmpty()) {
+    if (!isEntryEmpty() && _display.last != ' ') {
       if (!_display.contains(' ')) {
         List<String> lastNumber = [];
         String number = '';
@@ -96,7 +127,13 @@ class DisplayProvider with ChangeNotifier {
         for (String char in lastNumber) {
           number += char;
         }
-        _display.add((double.parse(number) / 100.0).toString());
+        double parsed = double.parse(number) / 100;
+        String parsedCheck =
+            _isInteger(parsed) ? parsed.round().toString() : parsed.toString();
+
+        _display.add(parsedCheck);
+        _result.clear();
+        _result.addAll(['= ', parsedCheck]);
       } else if (_display.contains('+') || _display.contains('-')) {
         String firstNumber = '';
         String secondNumber = '';
@@ -116,10 +153,11 @@ class DisplayProvider with ChangeNotifier {
 
         double secondOperand = double.parse(secondNumber);
         double result = firstOperand * (secondOperand / 100);
+        String parsed =
+            _isInteger(result) ? result.round().toString() : result.toString();
 
-        _display.add(_isInteger(result)
-            ? (result.round()).toString()
-            : result.toString());
+        _display.add(parsed);
+        _evaluateOnTheFly();
       }
     }
     notifyListeners();
@@ -145,10 +183,47 @@ class DisplayProvider with ChangeNotifier {
     for (dynamic item in postFix) {
       debugPrint(item.toString());
     }
-    _evaluatePostFix(postFix);
+    try {
+      final output = _evaluatePostFix(postFix);
+      _history.clear();
+      _history.addAll(_display);
+      _display.clear();
+      _display.addAll(output
+          .map((e) => _isInteger(e) ? e.round().toString() : e.toString()));
+      _result.clear();
+    } on EvalException catch (error) {
+      _result.clear();
+      _display.clear();
+      _history.clear();
+      _result.add(error.toString());
+    }
+    notifyListeners();
   }
 
-  void _evaluatePostFix(List<dynamic> postFix) {
+  void _evaluateOnTheFly() {
+    _result.clear();
+    if (_display.last == '.') {
+      _result.addAll(['= ', ..._display.map((e) => e.toString())]);
+      return;
+    }
+
+    try {
+      final postFix = _toPostFix(getDisplayAsString());
+      final output = _evaluatePostFix(postFix);
+      _result.addAll([
+        '= ',
+        ...output
+            .map((e) => _isInteger(e) ? e.round().toString() : e.toString()),
+      ]);
+    } on EvalException catch (error) {
+      _result.clear();
+      _display.clear();
+      _history.clear();
+      _result.add(error.toString());
+    }
+  }
+
+  List<double> _evaluatePostFix(List<dynamic> postFix) {
     List<double> output = [];
     double? firstOperand;
     double? secondOperand;
@@ -185,12 +260,22 @@ class DisplayProvider with ChangeNotifier {
           }
           firstOperand = null;
           secondOperand = null;
-        } catch (error) {
-          if (postFix.contains('√')) {
-            debugPrint(secondOperand!.toString());
-            output.insert(0, sqrt(secondOperand));
+        } on RangeError catch (rangeError) {
+          // if (postFix) {
+          //   throw Exception('Syntax error');
+          // }
+          if (firstOperand == null) {
+            if (secondOperand == null) {
+              throw EvalException('Syntax error');
+            }
+            output.insert(0, secondOperand);
             break;
           }
+          // if (postFix.contains('√')) {
+          //   debugPrint(secondOperand!.toString());
+          //   output.insert(0, sqrt(secondOperand));
+          //   break;
+          // }
           // else if (postFix.contains('-')) {
           //   debugPrint(secondOperand!.toString());
           //   output.insert(0, secondOperand * -1);
@@ -199,11 +284,14 @@ class DisplayProvider with ChangeNotifier {
         }
       }
     }
-    _history.clear();
-    _history.addAll(_display);
-    _display.clear();
-    _display.addAll(output.map((e) => e.toString()));
-    notifyListeners();
+    // _history.clear();
+    // _history.addAll(_display);
+    // _display.clear();
+    // _display.add('= ');
+    // _display.addAll(output.map((e) => e.toString()));
+
+    // notifyListeners();
+    return output;
   }
 
   List<dynamic> _toPostFix(String expression) {
