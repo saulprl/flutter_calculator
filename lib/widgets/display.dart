@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import '../providers/display_provider.dart';
 
@@ -13,6 +14,7 @@ class Display extends StatefulWidget {
 class _DisplayState extends State<Display> {
   late String _display;
   late String _history;
+  late String _result;
 
   @override
   void didChangeDependencies() {
@@ -23,6 +25,7 @@ class _DisplayState extends State<Display> {
   Widget build(BuildContext context) {
     _display = Provider.of<DisplayProvider>(context).getDisplayAsString();
     _history = Provider.of<DisplayProvider>(context).getHistoryAsString();
+    _result = Provider.of<DisplayProvider>(context).getResultAsString();
 
     return Container(
       width: double.infinity,
@@ -48,15 +51,20 @@ class _DisplayState extends State<Display> {
               _history,
               maxLines: 1,
               textAlign: TextAlign.right,
-              style: TextStyle(color: Colors.grey[600], fontSize: 28.0),
+              style: const TextStyle(color: Colors.white30, fontSize: 22.0),
             ),
-            Text(
+            AutoSizeText(
               _display,
-              maxLines: 2,
-              textAlign: TextAlign.right,
-              // textDirection: TextDirection.rtl,
-              style: const TextStyle(fontSize: 42.0),
+              maxLines: 3,
+              style: const TextStyle(fontSize: 38.0),
             ),
+            if (_result.isNotEmpty)
+              Text(
+                _result,
+                maxLines: 1,
+                textAlign: TextAlign.right,
+                style: const TextStyle(color: Colors.white70, fontSize: 28.0),
+              ),
           ],
         ),
       ),
